@@ -31,6 +31,11 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+app.use((req, res, next) => {
+	res.locals.currentUser = req.user;
+	next();
+});
+
 
 
 
@@ -95,7 +100,7 @@ app.get("/campgrounds/:id", function(req, res) {
 // 		COMMENT ROUTES
 // =======================
 
-app.get("/campgrounds/:id/comments/new", (req, res) => {
+app.get("/campgrounds/:id/comments/new", isLoggedIn, (req, res) => {
 	Campground.findById(req.params.id, (err, foundCampground) => {
 		if(!err) {
 			res.render("comments/new", {campground: foundCampground});
@@ -103,7 +108,7 @@ app.get("/campgrounds/:id/comments/new", (req, res) => {
 	})
 });
 
-app.post("/campgrounds/:id/comments", (req,res) => {
+app.post("/campgrounds/:id/comments", isLoggedIn, (req,res) => {
 	// lookup campground
 	// create comment
 	// connect new comment to campground
@@ -158,6 +163,20 @@ app.post('/login', passport.authenticate("local", {
 }));
 
 
+// Logout route
+app.get("/logout", (req, res) => {
+	req.logout();
+	res.redirect("/campgrounds");
+});
+
+
+function isLoggedIn(req, res, next) {
+	if(req.isAuthenticated()) {
+		return next();
+	}
+
+	res.redirect('/login');
+}
 
 
 // Tells the server to listen at this port
