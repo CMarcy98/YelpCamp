@@ -58,19 +58,15 @@ router.get("/:id", function(req, res) {
 
 
 // Edit a campground
-router.get("/:id/edit", (req, res) => {
+router.get("/:id/edit", checkCamgroundOwnership, (req, res) => {
 	Campground.findById(req.params.id, (err, foundCampground) => {
-		if(err) {
-			res.redirect('/campgrounds');
-		} else {
-			res.render('campgrounds/edit', {campground: foundCampground});
-		}
+		res.render('campgrounds/edit', {campground: foundCampground});
 	});
 });
 
 
 // Update a campground
-router.put("/:id", (req, res) => {
+router.put("/:id", checkCamgroundOwnership, (req, res) => {
 	Campground.findByIdAndUpdate(req.params.id, req.body.campground, (err, updatedCamp) => {
 		if(err) {
 			res.redirect("/campgrounds");
@@ -82,7 +78,7 @@ router.put("/:id", (req, res) => {
 
 
 // Delete a campground
-router.delete("/:id", (req, res) => {
+router.delete("/:id", checkCamgroundOwnership, (req, res) => {
 	Campground.findByIdAndRemove(req.params.id, (err) => {
 		if(err) {
 			res.redirect("/campgrounds");
@@ -93,6 +89,10 @@ router.delete("/:id", (req, res) => {
 });
 
 
+// ==============
+//   Middleware
+// ==============
+
 // Checks to see if user is logged in
 function isLoggedIn(req, res, next) {
 	if(req.isAuthenticated()) {
@@ -101,5 +101,28 @@ function isLoggedIn(req, res, next) {
 
 	res.redirect('/login');
 }
+
+// Checks to see if current user is the owner of the campground
+function checkCamgroundOwnership(req, res, next) {
+	// Is user logged in?
+	if(req.isAuthenticated()) {
+		Campground.findById(req.params.id, (err, foundCampground) => {
+			if(err) {
+				res.redirect("back");
+			} else {
+				// Is the user authorized to edit the campground we found?
+				if(foundCampground.author.id.equals(req.user._id)) {
+					next();
+				} else {
+					res.redirect("back");
+				}
+			}
+		});
+		// Otherwise redirect them
+	} else {
+		res.redirect("back");
+	}
+}
+
 
 module.exports = router;
