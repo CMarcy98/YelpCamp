@@ -1,5 +1,5 @@
 // Initializes and starts the application
-let express 	=   require('express'),
+var express 	=   require('express'),
 	app 		=   express(),
 	bodyParser 	=   require('body-parser'),
 	mongoose 	=   require('mongoose'),
@@ -126,12 +126,12 @@ app.post("/campgrounds/:id/comments", (req,res) => {
 // 		AUTH ROUTES
 // =======================
 
-// Register Form
+// Register Form for new users
 app.get('/register', (req, res) => {
 	res.render('register');
 });
 
-// Login logic using passport functionality
+// Register logic using passport functionality
 app.post('/register', (req, res) => {
 	var newUser = new User({username: req.body.username});
 	User.register(newUser, req.body.password, (err, user) => {
@@ -145,6 +145,17 @@ app.post('/register', (req, res) => {
 		});
 	});
 });
+
+// Login form for existing users
+app.get('/login', (req, res) => {
+	res.render('login');
+});
+
+// Login logic
+app.post('/login', passport.authenticate("local", {
+	successRedirect: "/campgrounds",
+	failureRedirect: "/login"
+}));
 
 
 
