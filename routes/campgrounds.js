@@ -81,6 +81,17 @@ router.put("/:id", (req, res) => {
 });
 
 
+// Delete a campground
+router.delete("/:id", (req, res) => {
+	Campground.findByIdAndRemove(req.params.id, (err) => {
+		if(err) {
+			res.redirect("/campgrounds");
+		} else {
+			res.redirect("/campgrounds");
+		}
+	});
+});
+
 
 // Checks to see if user is logged in
 function isLoggedIn(req, res, next) {
