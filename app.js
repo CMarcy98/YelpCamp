@@ -7,8 +7,6 @@ var express 	=   require('express'),
 	LocalStrategy = require('passport-local'),
 	session		= 	require('express-session'),
 	seedDB		= 	require('./seeds'),
-	Campground  =   require('./models/campground'),
-	Comment 	= 	require('./models/comment')
 	User  		= 	require('./models/user');
 
 // All required routes for app
@@ -22,7 +20,7 @@ mongoose.connect("mongodb://localhost/yelp_camp");
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({extended: true}));
-seedDB();
+// seedDB();
 
 
 // Passport config
