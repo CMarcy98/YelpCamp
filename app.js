@@ -1,4 +1,5 @@
 // Initialization and Imports
+require('dotenv').config();
 var express 	=   require('express'),
 	app 		=   express(),
 	bodyParser 	=   require('body-parser'),
@@ -9,6 +10,7 @@ var express 	=   require('express'),
 	methodOverride = require('method-override'),
 	session		= 	require('express-session'),
 	seedDB		= 	require('./seeds'),
+	db 			= 	require('./db'),
 	User  		= 	require('./models/user');
 
 // All required routes for app
@@ -18,7 +20,10 @@ var campgroundRoutes = require('./routes/campgrounds'),
 
 
 // App config
-mongoose.connect("mongodb://localhost/yelp_camp");
+// // console.log(process.env.DATABASEURL);
+// mongoose.connect("mongodb://localhost/yelp_camp");
+
+db();
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({extended: true}));
