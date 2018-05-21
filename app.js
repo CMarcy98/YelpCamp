@@ -34,7 +34,7 @@ app.use(flash());
 
 // Passport config
 app.use(session({
-	secret: "Yelp Camp secret key",
+	secret: process.env.SECRET_KEY,
 	resave: false,
 	saveUninitialized: false
 }));
