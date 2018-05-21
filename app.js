@@ -10,7 +10,6 @@ var express 	=   require('express'),
 	methodOverride = require('method-override'),
 	session		= 	require('express-session'),
 	seedDB		= 	require('./seeds'),
-	db 			= 	require('./db'),
 	User  		= 	require('./models/user');
 
 // All required routes for app
